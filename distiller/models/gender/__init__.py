@@ -15,3 +15,5 @@
 #
 
 """This package contains gender classification models for pytorch"""
+
+from .gender import *

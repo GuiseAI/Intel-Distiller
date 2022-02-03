@@ -26,6 +26,7 @@ import torch.nn as nn
 from . import cifar10 as cifar10_models
 from . import mnist as mnist_models
 from . import imagenet as imagenet_extra_models
+from . import gender as gender_models
 import pretrainedmodels
 
 from distiller.utils import set_model_input_shape_attr, model_setattr
@@ -60,8 +61,12 @@ MNIST_MODEL_NAMES = sorted(name for name in mnist_models.__dict__
                            if name.islower() and not name.startswith("__")
                            and callable(mnist_models.__dict__[name]))
 
+GENDER_MODEL_NAMES = sorted(name for name in gender_models.__dict__
+                           if name.islower() and not name.startswith("__")
+                           and callable(gender_models.__dict__[name]))
+
 ALL_MODEL_NAMES = sorted(map(lambda s: s.lower(),
-                            set(IMAGENET_MODEL_NAMES + CIFAR10_MODEL_NAMES + MNIST_MODEL_NAMES)))
+                            set(IMAGENET_MODEL_NAMES + CIFAR10_MODEL_NAMES + MNIST_MODEL_NAMES + GENDER_MODEL_NAMES)))
 
 
 def patch_torchvision_mobilenet_v2(model):
@@ -131,6 +136,8 @@ def create_model(pretrained, dataset, arch, parallel=True, device_ids=None):
             model = _create_cifar10_model(arch, pretrained)
         elif dataset == 'mnist':
             model = _create_mnist_model(arch, pretrained)
+        elif dataset == 'gender':
+            model = _create_gender_model(arch, pretrained)
     except ValueError:
         if _is_registered_extension(arch, dataset, pretrained):
             model = _create_extension_model(arch, dataset)
@@ -219,6 +226,15 @@ def _create_mnist_model(arch, pretrained):
         model = mnist_models.__dict__[arch]()
     except KeyError:
         raise ValueError("Model {} is not supported for dataset MNIST".format(arch))
+    return model
+
+def _create_gender_model(arch, pretrained):
+    if pretrained:
+        raise ValueError("Model {} (GENDER) does not have a pretrained model".format(arch))
+    try:
+        model = gender_models.__dict__[arch]()
+    except KeyError:
+        raise ValueError("Model {} is not supported for dataset GENDER".format(arch))
     return model
 
 
