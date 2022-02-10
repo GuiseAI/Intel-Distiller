@@ -21,6 +21,7 @@ This code will help with the image classification datasets: ImageNet and CIFAR10
 """
 import os
 import torch
+import torchvision
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from torch.utils.data.sampler import Sampler
@@ -29,14 +30,16 @@ import numpy as np
 import distiller
 
 
-DATASETS_NAMES = ['imagenet', 'cifar10', 'mnist']
+DATASETS_NAMES = ['imagenet', 'cifar10', 'mnist', 'gender']
 
 
 def classification_dataset_str_from_arch(arch):
     if 'cifar' in arch:
         dataset = 'cifar10' 
     elif 'mnist' in arch:
-        dataset = 'mnist' 
+        dataset = 'mnist'
+    elif 'gender' in arch:
+        dataset = 'gender'
     else:
         dataset = 'imagenet'
     return dataset
@@ -45,6 +48,7 @@ def classification_dataset_str_from_arch(arch):
 def classification_num_classes(dataset):
     return {'cifar10': 10,
             'mnist': 10,
+            'gender': 2,
             'imagenet': 1000}.get(dataset, None)
 
 
@@ -55,6 +59,8 @@ def classification_get_input_shape(dataset):
         return 1, 3, 32, 32
     elif dataset == 'mnist':
         return 1, 1, 28, 28
+    elif dataset == 'gender':
+        return 1, 3, 128, 128
     else:
         raise ValueError("dataset %s is not supported" % dataset)
 
@@ -62,6 +68,7 @@ def classification_get_input_shape(dataset):
 def __dataset_factory(dataset, arch):
     return {'cifar10': cifar10_get_datasets,
             'mnist': mnist_get_datasets,
+            'gender': gender_get_datasets,
             'imagenet': partial(imagenet_get_datasets, arch=arch)}.get(dataset, None)
 
 
@@ -121,8 +128,36 @@ def mnist_get_datasets(data_dir, load_train=True, load_test=True):
         test_dataset = datasets.MNIST(root=data_dir, train=False,
                                       transform=test_transform)
 
+    import pdb
+    pdb.set_trace()
+
     return train_dataset, test_dataset
 
+def gender_get_datasets(data_dir, load_train=True, load_test=True):
+    """Load the gender dataset."""
+    train_dataset = None
+    if load_train:
+        train_transform = transforms.Compose([
+            transforms.Resize((128, 128)),   #128,128
+            transforms.RandomCrop((120, 120)),  #120,120
+            transforms.RandomRotation(10),  #10
+            transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+            transforms.RandomAffine(0,shear=10,scale=(0.8,1.2)),
+            transforms.ToTensor()
+        ])
+        train_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=train_transform)
+
+    test_dataset = None
+    if load_test:
+        test_transform = transforms.Compose([
+            transforms.Resize((128, 128)),
+            transforms.CenterCrop((120, 120)),
+            transforms.ToTensor()
+        ])
+        test_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=test_transform)
+
+    return train_dataset, test_dataset
 
 def cifar10_get_datasets(data_dir, load_train=True, load_test=True):
     """Load the CIFAR10 dataset.
@@ -163,6 +198,11 @@ def cifar10_get_datasets(data_dir, load_train=True, load_test=True):
 
         test_dataset = datasets.CIFAR10(root=data_dir, train=False,
                                         download=True, transform=test_transform)
+
+
+
+    import pdb
+    pdb.set_trace()
 
     return train_dataset, test_dataset
 

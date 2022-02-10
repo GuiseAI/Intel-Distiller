@@ -211,6 +211,7 @@ def init_classifier_compression_arg_parser(include_ptq_lapq_args=False):
 
     parser = argparse.ArgumentParser(description='Distiller image classification model compression')
     parser.add_argument('data', metavar='DATASET_DIR', help='path to dataset')
+    print(models.GENDER_MODEL_NAMES)
     parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet18', type=lambda s: s.lower(),
                         choices=models.ALL_MODEL_NAMES,
                         help='model architecture: ' +
@@ -379,6 +380,9 @@ def _config_compute_device(args):
 
 
 def _init_learner(args):
+
+    print("_init_learner {}, {}, {}".format(args.pretrained, args.dataset, args.arch))
+
     # Create the model
     model = create_model(args.pretrained, args.dataset, args.arch,
                          parallel=not args.load_serialized, device_ids=args.gpus)
@@ -588,6 +592,7 @@ def train(train_loader, model, criterion, optimizer, epoch,
                 loss = criterion(output, target)
             # Measure accuracy
             # For inception models, we only consider accuracy of main classifier
+
             if isinstance(output, tuple):
                 classerr.add(output[0].detach(), target)
             else:

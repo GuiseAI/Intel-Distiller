@@ -35,7 +35,7 @@ from distiller.modules import Mean, EltwiseAdd
 import logging
 msglogger = logging.getLogger()
 
-SUPPORTED_DATASETS = ('imagenet', 'cifar10', 'mnist')
+SUPPORTED_DATASETS = ('imagenet', 'cifar10', 'mnist', 'gender')
 
 # ResNet special treatment: we have our own version of ResNet, so we need to over-ride
 # TorchVision's version.
@@ -123,6 +123,9 @@ def create_model(pretrained, dataset, arch, parallel=True, device_ids=None):
             -1 - CPU
             >=0 - GPU device IDs
     """
+
+    print("Create Model!")
+
     dataset = dataset.lower()
     if dataset not in SUPPORTED_DATASETS:
         raise ValueError('Dataset {} is not supported'.format(dataset))

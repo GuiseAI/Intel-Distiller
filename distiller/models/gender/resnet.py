@@ -18,11 +18,17 @@
 Implementation of the Guise Gender Model
 """
 
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 
-__all__ = []
+__all__ = ['gender_resnet']
+
+def conv3x3(in_planes, out_planes, stride=1):
+    """3x3 convolution with padding"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
+                    padding=1, bias=False)
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -121,10 +127,10 @@ class ResNet(nn.Module):
         return logits
 
 
-def gender_resnet(num_classes, grayscale):
+def gender_resnet():
     """Constructs a ResNet-18 model."""
     model = ResNet(block=BasicBlock,
                    layers=[1,1,1,1],
-                   num_classes=num_classes,
-                   grayscale=grayscale)
+                   num_classes=2,
+                   grayscale=False)
     return model
