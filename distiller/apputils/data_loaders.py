@@ -146,7 +146,7 @@ def gender_get_datasets(data_dir, load_train=True, load_test=True):
             transforms.RandomAffine(0,shear=10,scale=(0.8,1.2)),
             transforms.ToTensor()
         ])
-        train_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=train_transform)
+        train_dataset = torchvision.datasets.ImageFolder(root=data_dir + "/train", transform=train_transform)
 
     test_dataset = None
     if load_test:
@@ -155,7 +155,10 @@ def gender_get_datasets(data_dir, load_train=True, load_test=True):
             transforms.CenterCrop((120, 120)),
             transforms.ToTensor()
         ])
-        test_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=test_transform)
+        test_dataset = torchvision.datasets.ImageFolder(root=data_dir + "/test", transform=test_transform)
+
+    import pdb
+    pdb.set_trace()
 
     return train_dataset, test_dataset
 
