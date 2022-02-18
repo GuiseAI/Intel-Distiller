@@ -128,9 +128,6 @@ def mnist_get_datasets(data_dir, load_train=True, load_test=True):
         test_dataset = datasets.MNIST(root=data_dir, train=False,
                                       transform=test_transform)
 
-    import pdb
-    pdb.set_trace()
-
     return train_dataset, test_dataset
 
 def gender_get_datasets(data_dir, load_train=True, load_test=True):
@@ -156,9 +153,6 @@ def gender_get_datasets(data_dir, load_train=True, load_test=True):
             transforms.ToTensor()
         ])
         test_dataset = torchvision.datasets.ImageFolder(root=data_dir + "/test", transform=test_transform)
-
-    import pdb
-    pdb.set_trace()
 
     return train_dataset, test_dataset
 
@@ -201,11 +195,6 @@ def cifar10_get_datasets(data_dir, load_train=True, load_test=True):
 
         test_dataset = datasets.CIFAR10(root=data_dir, train=False,
                                         download=True, transform=test_transform)
-
-
-
-    import pdb
-    pdb.set_trace()
 
     return train_dataset, test_dataset
 

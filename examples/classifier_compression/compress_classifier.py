@@ -209,6 +209,7 @@ def greedy(model, criterion, optimizer, loggers, args):
 
 if __name__ == '__main__':
     try:
+        print ("Compress Classifier")
         main()
     except KeyboardInterrupt:
         print("\n-- KeyboardInterrupt --")

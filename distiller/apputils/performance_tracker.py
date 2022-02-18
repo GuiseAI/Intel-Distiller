@@ -54,7 +54,7 @@ class SparsityAccuracyTracker(TrainingPerformanceTracker):
     Expects 'top1' and 'top5' to appear in the kwargs.
     """
     def step(self, model, epoch, **kwargs):
-        assert all(score in kwargs.keys() for score in ('top1'))
+        #assert all(score in kwargs.keys() for score in ('top1'))
         model_sparsity, _, params_nnz_cnt = distiller.model_params_stats(model)
         self.perf_scores_history.append(distiller.MutableNamedTuple({
             'params_nnz_cnt': -params_nnz_cnt,
